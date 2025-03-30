@@ -10,7 +10,13 @@ This repository contains PowerShell scripts and documentation for implementing s
 
 ### Documentation
 
-- [Guide for Disabling LLMNR and mDNS](docs/disable_LLMNR_mDNS_guide.html) - Step-by-step instructions with screenshots for implementing LLMNR and mDNS disabling via Group Policy.
+We provide documentation in multiple formats to suit your needs:
+
+- [HTML Guide](docs/disable_LLMNR_mDNS_guide.html) - Interactive step-by-step instructions with explanations
+- [Markdown Guides](docs/) - PDF-compatible documentation:
+  - [Basic Guide](docs/Disabling_LLMNR_mDNS_Guide.md) - Step-by-step guide with screenshot placeholders
+  - [Comprehensive Guide](docs/Comprehensive_LLMNR_mDNS_Guide.md) - Detailed technical documentation with background information
+- [PDF Creation Instructions](docs/README.md) - Learn how to convert the markdown guides to PDF format
 
 ## Why Disable LLMNR and mDNS?
 
@@ -45,6 +51,10 @@ Disabling these protocols is a recommended security practice by many organizatio
 4. Follow the prompts to complete the implementation
 
 Alternatively, follow the step-by-step guide in the documentation section to manually configure the necessary Group Policy settings.
+
+## Documentation
+
+See the [documentation directory](docs/) for comprehensive guides on implementing and verifying these security settings. Both HTML and markdown formats are provided, with instructions for converting to PDF for easy distribution.
 
 ## Contributing
 
