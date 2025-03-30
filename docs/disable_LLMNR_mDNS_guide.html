@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Disabling LLMNR and mDNS in Active Directory via Group Policy</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            color: #333;
+        }
+        h1, h2, h3 {
+            color: #0066cc;
+        }
+        .step {
+            margin-bottom: 30px;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 20px;
+        }
+        .note {
+            background-color: #fffacd;
+            padding: 15px;
+            border-left: 4px solid #ffcc00;
+            margin: 20px 0;
+        }
+        .warning {
+            background-color: #ffeeee;
+            padding: 15px;
+            border-left: 4px solid #cc0000;
+            margin: 20px 0;
+        }
+        code {
+            background-color: #f5f5f5;
+            padding: 2px 5px;
+            border-radius: 3px;
+            font-family: Consolas, Monaco, 'Andale Mono', monospace;
+        }
+        pre {
+            background-color: #f5f5f5;
+            padding: 10px;
+            border-radius: 5px;
+            overflow-x: auto;
+            font-family: Consolas, Monaco, 'Andale Mono', monospace;
+        }
+        img {
+            max-width: 100%;
+            height: auto;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 5px;
+            margin: 20px 0;
+        }
+        .img-caption {
+            text-align: center;
+            font-style: italic;
+            margin-top: -15px;
+            margin-bottom: 20px;
+            color: #666;
+        }
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            margin: 20px 0;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+    </style>
+</head>
+<body>
+    <h1>Disabling LLMNR and mDNS in Active Directory via Group Policy</h1>
+    
+    <div class="note">
+        <strong>Note:</strong> This guide demonstrates how to disable Link-Local Multicast Name Resolution (LLMNR) and Multicast DNS (mDNS) protocols in an Active Directory environment using Group Policy. These steps should be performed by a domain administrator.
+    </div>
+
+    <h2>Introduction</h2>
+    <p>Link-Local Multicast Name Resolution (LLMNR) and Multicast DNS (mDNS) are network protocols that allow name resolution without a DNS server. While convenient, they present security risks as they can be exploited for man-in-the-middle attacks, credential theft, and network reconnaissance.</p>
+    
+    <p>This guide will show you how to disable these protocols using Group Policy Objects (GPOs) to enhance your network security posture.</p>
+
+    <h2>Prerequisites</h2>
+    <ul>
+        <li>Domain Administrator privileges</li>
+        <li>Access to a domain controller</li>
+        <li>Group Policy Management Console (GPMC) installed</li>
+        <li>Active Directory Module for Windows PowerShell</li>
+    </ul>
+
+    <h2>Step-by-Step Guide</h2>
+
+    <div class="step">
+        <h3>Step 1: Log in to your Domain Controller</h3>
+        <p>Log in to your domain controller with an account that has Domain Administrator privileges.</p>
+        
+        <div class="img-placeholder">
+            <p>[Image showing Windows Server login screen]</p>
+            <div class="img-caption">Figure 1: Log in to the Domain Controller with administrator credentials</div>
+        </div>
+    </div>
+
+    <div class="step">
+        <h3>Step 2: Open Group Policy Management Console</h3>
+        <p>Open the Group Policy Management Console:</p>
+        <ol>
+            <li>Click on <strong>Start</strong></li>
+            <li>Type "Group Policy Management" and click on the result</li>
+            <li>Or navigate to <strong>Server Manager</strong> → <strong>Tools</strong> → <strong>Group Policy Management</strong></li>
+        </ol>
+        
+        <div class="img-placeholder">
+            <p>[Image showing opening Group Policy Management Console]</p>
+            <div class="img-caption">Figure 2: Opening Group Policy Management Console</div>
+        </div>
+    </div>
+
+    <div class="step">
+        <h3>Step 3: Create GPO for Domain Controllers</h3>
+        <p>First, let's create a GPO to disable LLMNR and mDNS on Domain Controllers:</p>
+        <ol>
+            <li>In the Group Policy Management Console, right-click on the "<strong>Group Policy Objects</strong>" folder under your domain</li>
+            <li>Select "<strong>New</strong>"</li>
+            <li>Name it "<strong>Disable LLMNR and mDNS - Domain Controllers</strong>"</li>
+            <li>Click "<strong>OK</strong>"</li>
+        </ol>
+        
+        <div class="img-placeholder">
+            <p>[Image showing creating a new GPO]</p>
+            <div class="img-caption">Figure 3: Creating a new GPO for Domain Controllers</div>
+        </div>
+    </div>
+
+    <div class="step">
+        <h3>Step 4: Configure LLMNR settings in the GPO</h3>
+        <ol>
+            <li>Right-click the newly created GPO and select "<strong>Edit</strong>"</li>
+            <li>Navigate to <strong>Computer Configuration</strong> → <strong>Policies</strong> → <strong>Administrative Templates</strong> → <strong>Network</strong> → <strong>DNS Client</strong></li>
+            <li>Find the policy "<strong>Turn off multicast name resolution</strong>"</li>
+            <li>Double-click this policy to open it</li>
+            <li>Select "<strong>Enabled</strong>"</li>
+            <li>Click "<strong>OK</strong>"</li>
+        </ol>
+        
+        <div class="img-placeholder">
+            <p>[Image showing the DNS Client policy settings with LLMNR being disabled]</p>
+            <div class="img-caption">Figure 4: Enabling the "Turn off multicast name resolution" policy</div>
+        </div>
+    </div>
+
+    <div class="step">
+        <h3>Step 5: Configure mDNS settings in the GPO</h3>
+        <p>We'll need to use registry settings to disable mDNS as there is no direct Group Policy setting for it:</p>
+        <ol>
+            <li>In the GPO editor, navigate to <strong>Computer Configuration</strong> → <strong>Preferences</strong> → <strong>Windows Settings</strong> → <strong>Registry</strong></li>
+            <li>Right-click on <strong>Registry</strong> and select <strong>New</strong> → <strong>Registry Item</strong></li>
+            <li>Configure the registry item:
+                <ul>
+                    <li>Action: <strong>Update</strong></li>
+                    <li>Hive: <strong>HKEY_LOCAL_MACHINE</strong></li>
+                    <li>Key Path: <strong>SYSTEM\CurrentControlSet\Services\Dnscache\Parameters</strong></li>
+                    <li>Value name: <strong>EnableMDNS</strong></li>
+                    <li>Value type: <strong>REG_DWORD</strong></li>
+                    <li>Value data: <strong>0</strong></li>
+                </ul>
+            </li>
+            <li>Click "<strong>OK</strong>"</li>
+        </ol>
+        
+        <div class="img-placeholder">
+            <p>[Image showing the Registry Editor in Group Policy with mDNS being disabled]</p>
+            <div class="img-caption">Figure 5: Creating a registry entry to disable mDNS</div>
+        </div>
+    </div>
+
+    <div class="step">
+        <h3>Step 6: Link the GPO to the Domain Controllers OU</h3>
+        <ol>
+            <li>Back in the Group Policy Management Console, right-click on the "<strong>Domain Controllers</strong>" organizational unit</li>
+            <li>Select "<strong>Link an Existing GPO</strong>"</li>
+            <li>Select the "<strong>Disable LLMNR and mDNS - Domain Controllers</strong>" GPO</li>
+            <li>Click "<strong>OK</strong>"</li>
+        </ol>
+        
+        <div class="img-placeholder">
+            <p>[Image showing linking the GPO to the Domain Controllers OU]</p>
+            <div class="img-caption">Figure 6: Linking the GPO to the Domain Controllers OU</div>
+        </div>
+    </div>
+
+    <div class="step">
+        <h3>Step 7: Create and Link GPO for Client Computers</h3>
+        <p>Now repeat the process for client computers:</p>
+        <ol>
+            <li>Create a new GPO named "<strong>Disable LLMNR and mDNS - Client Computers</strong>"</li>
+            <li>Configure the same settings as in Steps 4 and 5</li>
+            <li>Link this GPO to the OU containing your client computers (e.g., "Computers" OU)</li>
+        </ol>
+        
+        <div class="img-placeholder">
+            <p>[Image showing the GPO linked to the Computers OU]</p>
+            <div class="img-caption">Figure 7: GPO linked to the Computers OU</div>
+        </div>
+    </div>
+
+    <div class="step">
+        <h3>Step 8: Force Group Policy Update</h3>
+        <p>To apply the new policies immediately:</p>
+        <ol>
+            <li>On each domain controller and client computer, open a Command Prompt or PowerShell as Administrator</li>
+            <li>Run the command: <code>gpupdate /force</code></li>
+            <li>Wait for the update to complete</li>
+        </ol>
+        
+        <div class="img-placeholder">
+            <p>[Image showing the gpupdate command running]</p>
+            <div class="img-caption">Figure 8: Running gpupdate /force to apply the Group Policy changes</div>
+        </div>
+    </div>
+
+    <div class="step">
+        <h3>Step 9: Verify the Policy Application</h3>
+        <p>To verify that the policies have been applied correctly:</p>
+        <ol>
+            <li>On a client computer, open a Command Prompt as Administrator</li>
+            <li>Run the command: <code>gpresult /h C:\GPReport.html</code></li>
+            <li>Open the generated HTML report and check for the applied policies</li>
+            <li>Alternatively, check the registry keys directly:
+                <ul>
+                    <li>Open Registry Editor: <code>regedit</code></li>
+                    <li>Navigate to <code>HKLM\Software\Policies\Microsoft\Windows NT\DNSClient</code></li>
+                    <li>Verify that "<strong>EnableMulticast</strong>" is set to 0</li>
+                    <li>Navigate to <code>HKLM\SYSTEM\CurrentControlSet\Services\Dnscache\Parameters</code></li>
+                    <li>Verify that "<strong>EnableMDNS</strong>" is set to 0</li>
+                </ul>
+            </li>
+        </ol>
+        
+        <div class="img-placeholder">
+            <p>[Image showing the registry with the settings applied]</p>
+            <div class="img-caption">Figure 9: Verifying registry settings</div>
+        </div>
+    </div>
+
+    <h2>Using the PowerShell Script</h2>
+    <p>Alternatively, you can use the provided PowerShell script to automate the entire process:</p>
+    
+    <ol>
+        <li>Log in to a domain controller with Domain Administrator privileges</li>
+        <li>Download the <code>disable_LLMNR_mDNS.ps1</code> script from the repository</li>
+        <li>Open PowerShell as Administrator</li>
+        <li>Navigate to the directory containing the script</li>
+        <li>Run the script: <code>.\disable_LLMNR_mDNS.ps1</code></li>
+        <li>Follow the prompts in the script</li>
+    </ol>
+
+    <pre>
+# Example execution:
+PS C:\Scripts> .\disable_LLMNR_mDNS.ps1
+Enter the Distinguished Name of the OU containing client computers: OU=Workstations,DC=contoso,DC=com
+    </pre>
+
+    <div class="warning">
+        <strong>Warning:</strong> Always test Group Policy changes in a non-production environment first. Disabling these protocols may affect applications that rely on them. Ensure you have tested thoroughly before implementing in production.
+    </div>
+
+    <h2>Conclusion</h2>
+    <p>By disabling LLMNR and mDNS through Group Policy, you've eliminated potential attack vectors in your Active Directory environment. These changes help prevent man-in-the-middle attacks and credential theft, significantly improving your organization's security posture.</p>
+
+    <div class="note">
+        <strong>Note:</strong> Remember to monitor your environment after making these changes to ensure there are no unintended consequences or applications that rely on these protocols.
+    </div>
+
+    <footer>
+        <p>&copy; 2025 - Active Directory Security Best Practices</p>
+    </footer>
+</body>
+</html>
