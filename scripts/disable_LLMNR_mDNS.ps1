@@ -10,7 +10,7 @@
     potential man-in-the-middle attacks that exploit these protocols.
 
 .NOTES
-    File Name  : LLMNR_mDNS_Disabled.ps1
+    File Name  : disable_LLMNR_mDNS.ps1
     Author     : Domain Administrator
     Requires   : PowerShell 5.1
                  Active Directory PowerShell Module
@@ -19,7 +19,7 @@
                  Domain Admin privileges
 
 .EXAMPLE
-    .\LLMNR_mDNS_Disabled.ps1
+    .\disable_LLMNR_mDNS.ps1
     Runs the script to create and apply GPOs to disable LLMNR and mDNS.
 #>
 
@@ -154,17 +154,19 @@ function New-MDNSDisabledGPO {
             Write-Host "Creating new GPO: $GPOName..." -ForegroundColor Cyan
             $newGPO = New-GPO -Name $GPOName -Comment "Disables mDNS protocol for security hardening"
             
-            # Configure registry settings to disable mDNS
-            $mdnsRegPath = "HKLM\Software\Policies\Microsoft\Windows NT\DNSClient"
-            $mdnsValueName = "EnableMulticast"
-            $mdnsValue = 0
+            # Configure registry settings to disable mDNS - DNSClient policy
+            # This policy might overlap with LLMNR policy, but we're keeping it for completeness
+            $mdnsRegPath1 = "HKLM\Software\Policies\Microsoft\Windows NT\DNSClient"
+            $mdnsValueName1 = "EnableMulticast"
+            $mdnsValue1 = 0
             
+            # Configure registry settings to disable mDNS - Dnscache service parameters
             $mdnsRegPath2 = "HKLM\SYSTEM\CurrentControlSet\Services\Dnscache\Parameters"
             $mdnsValueName2 = "EnableMDNS"
             $mdnsValue2 = 0
             
             Write-Host "Configuring mDNS registry settings in GPO..." -ForegroundColor Cyan
-            Set-GPRegistryValue -Name $GPOName -Key $mdnsRegPath -ValueName $mdnsValueName -Type DWord -Value $mdnsValue
+            Set-GPRegistryValue -Name $GPOName -Key $mdnsRegPath1 -ValueName $mdnsValueName1 -Type DWord -Value $mdnsValue1
             Set-GPRegistryValue -Name $GPOName -Key $mdnsRegPath2 -ValueName $mdnsValueName2 -Type DWord -Value $mdnsValue2
             
             # Link GPO to target OU
